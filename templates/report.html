@@ -1,0 +1,72 @@
+<!DOCTYPE html>  
+<html lang="ru">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>Отчет</title>  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" integrity="sha256-2TnSHycBDAm2wpZmgdi0z81kykGPJAkiUY+Wf97RbvY=" crossorigin="anonymous">
+    <style>  
+        body {  
+            font-family: Arial, sans-serif; /* Начальный шрифт */  
+            background-color: #f8f9fa; /* Светло-серый фон */  
+            color: #343a40; /* Темно-серый текст для контраста */ 
+            justify-content: space-between;
+        }  
+        h1, h3 {  
+            text-align: center; /* Выравнивание заголовков по центру */  
+        }
+        div {
+                background: #DCDCDC; /* Цвет фона */
+                padding: 20px; /* Поля вокруг текста */
+                margin-top: 20px; /* Отступ сверху */
+            }
+        .table {  
+            background-color: #ffffff; /* Белый фон для таблицы */  
+        }  
+        .table-striped tbody tr:nth-of-type(odd) {  
+            background-color: #f2f2f2; /* Нейтральный светлый фон для четных строк таблицы */  
+        }
+        nav ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 10px;
+        }
+        nav li {
+            margin-right: 20px;
+        }
+    </style>  
+</head>  
+<body>  
+{% load crispy_forms_filters %}
+{% load crispy_forms_tags %}
+    <div class="container">  
+        <h1>Отчет</h1>  
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary mt-2">Назад к заявкам</a>  
+
+        <h3>Общая информация</h3>  
+        <p>Общее количество заявок: <strong>{{ total_requests }}</strong></p>  
+        <p>Общая стоимость заявок: <strong>{{ total_cost|floatformat:2 }}</strong> руб.</p>  
+
+        <h3>График по статусам заявок</h3>  
+        <img src="data:image/png;base64,{{ status_chart }}" alt="График по статусам" class="img-fluid">  
+
+        <h3>Статистика по статусам заявок</h3>  
+        <ul class="list-group">  
+            {% for stat in request_status_stats %}  
+                <li class="list-group-item">{{ stat.status }} - {{ stat.request_count }} заявок</li>  
+            {% empty %}  
+                <li class="list-group-item">Статистика не найдена.</li>  
+            {% endfor %}  
+        </ul>  
+        <h3>Популярные направления</h3>  
+        <ul>  
+            {% for direction in popular_directions %}  
+                <li>{{ direction.direction }} - {{ direction.direction_count }} заявок</li>  
+            {% empty %}  
+                <li>Нет популярных направлений для отображения.</li>  
+            {% endfor %}  
+        </ul>  
+    </div>
+</body>  
+</html>

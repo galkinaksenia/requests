@@ -1,0 +1,140 @@
+<!DOCTYPE html>  
+<html lang="ru">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>Панель администратора</title>  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" integrity="sha256-2TnSHycBDAm2wpZmgdi0z81kykGPJAkiUY+Wf97RbvY=" crossorigin="anonymous">
+    <style>  
+        body {  
+            font-family: Arial, sans-serif; /* Начальный шрифт */  
+            background-color: #f8f9fa; /* Светло-серый фон */  
+            color: #343a40; /* Темно-серый текст для контраста */ 
+            justify-content: space-between;
+        }  
+        h1, h3 {  
+            text-align: center; /* Выравнивание заголовков по центру */  
+        }
+        div {
+                background: #DCDCDC; /* Цвет фона */
+                padding: 20px; /* Поля вокруг текста */
+                margin-top: 20px; /* Отступ сверху */
+            }
+        .table {  
+            background-color: #ffffff; /* Белый фон для таблицы */  
+        }  
+        .table-striped tbody tr:nth-of-type(odd) {  
+            background-color: #f2f2f2; /* Нейтральный светлый фон для четных строк таблицы */  
+        }
+        nav ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 10px;
+        }
+        nav li {
+            margin-right: 20px;
+        }
+    </style>
+</head>  
+<body>  
+    <div class="container">  
+        <nav>
+            <ul class="list-inline">  
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'profile' %}">Личный кабинет</a></li>
+                    <li><a href="{% url 'logout' %}">Выход</a></li>
+                {% endif %}
+            </ul>  
+        </nav>
+        <h1>Панель администратора</h1>  
+        {% if messages %}  
+            {% for message in messages %}  
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>  
+            {% endfor %}  
+        {% endif %}  
+        <h2>Мониторинг системы</h2>  
+        <p><strong>Количество активных заявок:</strong> {{ active_requests_count }}</p>  
+        <p><strong>Количество зарегистрированных пользователей:</strong> {{ registered_users_count }}</p>  
+        
+        <h3>Управление базой данных</h3>  
+        <h4>Удалить заявку по ID:</h4>  
+        <form action="{% url 'delete_request_by_id' %}" method="post">  
+            {% csrf_token %}  
+            <input type="number" name="request_id" placeholder="ID заявки" required>  
+            <button type="submit" class="btn btn-secondary mt-2">Удалить заявку</button>  
+        </form>  
+
+        <h4>Удалить пользователя по ID:</h4>  
+        <form action="{% url 'delete_user_by_id' %}" method="post">  
+            {% csrf_token %}  
+            <input type="number" name="user_id" placeholder="ID пользователя" required>  
+            <button type="submit" class="btn btn-secondary mt-2">Удалить пользователя</button>  
+        </form>   
+        
+        <h3>Журнал ошибок</h3>  
+        <table class="table">  
+            <thead>  
+                <tr>  
+                    <th>ID</th>  
+                    <th>Дата</th>  
+                    <th>Описание</th>  
+                    <th>Статус</th>  
+                </tr>  
+            </thead>  
+            <tbody>  
+                {% for log in error_logs %}  
+                <tr>  
+                    <td>{{ log.id }}</td>  
+                    <td>{{ log.timestamp }}</td>  
+                    <td>{{ log.message }}</td>  
+                    <td>{{ log.is_read|yesno:"Обработана, Необработанная"  }}</td>  
+                    <td>  
+                        {% if not log.is_read %}  
+                        <a href="{% url 'mark_error_as_read' log.id %}" class="btn btn-success btn-sm">Изменить статус</a>
+                        {% endif %}  
+                    </td>  
+                </tr>  
+                {% empty %}  
+                <tr>  
+                    <td colspan="4">Нет ошибок.</td>  
+                </tr>  
+                {% endfor %}  
+            </tbody>  
+        </table>  
+    
+    <h3>Обратная связь от пользователей</h3>  
+        <table class="table">  
+            <thead>  
+                <tr>  
+                    <th>ID</th>  
+                    <th>Пользователь (id)</th>  
+                    <th>Сообщение</th>  
+                    <th>Дата</th>  
+                    <th>Статус</th>  
+                </tr>  
+            </thead>  
+            <tbody>  
+                {% for feedback in feedbacks %}  
+                <tr>  
+                    <td>{{ feedback.id }}</td>  
+                    <td>{{ feedback.user_id }}</td>  
+                    <td>{{ feedback.message }}</td>  
+                    <td>{{ feedback.created_at }}</td>  
+                    <td>{{ feedback.is_read|yesno:"Прочитано, Не прочитано" }}</td> 
+                    <td>
+                        {% if not feedback.is_read %}  
+                        <a href="{% url 'mark_feedback_as_read' feedback.id %}">Отметить прочитанным</a>
+                        {% endif %}  
+                    </td>
+                </tr>  
+                {% empty %}  
+                <tr>  
+                    <td colspan="5">Нет обратной связи.</td>  
+                </tr>  
+                {% endfor %}  
+            </tbody>  
+        </table>  
+    </div>  
+</body>  
+</html>

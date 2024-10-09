@@ -1,0 +1,46 @@
+<!DOCTYPE html>  
+<html lang="ru">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>Изменение статуса заявки</title>  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" integrity="sha256-2TnSHycBDAm2wpZmgdi0z81kykGPJAkiUY+Wf97RbvY=" crossorigin="anonymous">
+    <style>  
+        body {  
+            font-family: Arial, sans-serif; /* Начальный шрифт */  
+            background-color: #f8f9fa; /* Светло-серый фон */  
+            color: #343a40; /* Темно-серый текст для контраста */ 
+            justify-content: space-between;
+        }  
+        h3 {  
+            text-align: center; /* Выравнивание заголовков по центру */  
+        }
+        div {
+                background: #DCDCDC; /* Цвет фона */
+                padding: 20px; /* Поля вокруг текста */
+                margin-top: 20px; /* Отступ сверху */
+            }
+    </style>  
+</head>  
+<body>  
+    <div class="container">  
+        <h1>Изменение статуса заявки</h1>  
+        <form method="POST">  
+            {% csrf_token %}  
+            <input type="hidden" name="id" value="{{ request.id }}">  
+            {{ form.as_p }}  
+            <button type="submit" class="btn btn-secondary mt-2">Изменить статус</button>  
+        </form>  
+        
+        <div class="container text-center">
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary mt-2">Назад к заявкам</a> 
+        </div>
+        
+    </div>  
+</body>  
+</html>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>  
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>  
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> 
+</body>  
+</html>

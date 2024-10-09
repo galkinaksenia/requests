@@ -1,0 +1,35 @@
+<!DOCTYPE html>  
+<html lang="ru">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>Создать заявку</title>  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" integrity="sha256-2TnSHycBDAm2wpZmgdi0z81kykGPJAkiUY+Wf97RbvY=" crossorigin="anonymous">
+    <style>
+         body {  
+            font-family: Arial, sans-serif; /* Начальный шрифт */  
+            background-color: #f8f9fa; /* Светло-серый фон */  
+            color: #343a40; /* Темно-серый текст для контраста */ 
+            justify-content: space-between;
+        }  
+         div {
+                background: #DCDCDC; /* Цвет фона */
+                padding: 20px; /* Поля вокруг текста */
+                margin-top: 20px; /* Отступ сверху */
+            }
+    </style>
+</head>  
+<body>  
+    <div class="container">
+        <h2>Создать новую заявку на грузоперевозку</h2>  
+        <form method="POST">  
+            {% csrf_token %}  
+            {{ form.as_p }}  
+            <button type="submit">Создать заявку</button>  
+        </form>  
+        </div>
+    <div class="container text-center">
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary mt-2">Назад к заявкам</a> 
+    </div>
+</body>  
+</html>

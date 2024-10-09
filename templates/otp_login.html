@@ -1,0 +1,18 @@
+<!DOCTYPE html>  
+<html lang="ru">  
+<head>  
+    <meta charset="UTF-8">  
+    <title>Ввод кода MFA</title>  
+</head>  
+<body>  
+    <h2>Введите код из приложения-аутентификатора</h2>  
+    <form method="POST">  
+        {% csrf_token %}  
+        <label for="token">Код:</label>  
+        <input type="text" name="token" required><br>  
+        <button type="submit">Подтвердить</button>  
+    </form>  
+    <br>  
+    <a href="{% url 'login' %}">Назад к входу</a>  
+</body>  
+</html>

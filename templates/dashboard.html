@@ -1,0 +1,177 @@
+<!DOCTYPE html>  
+<html lang="ru">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>Заявки</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" integrity="sha256-2TnSHycBDAm2wpZmgdi0z81kykGPJAkiUY+Wf97RbvY=" crossorigin="anonymous">
+    <style>  
+        body {  
+            font-family: Arial, sans-serif; /* Начальный шрифт */  
+            background-color: #f8f9fa; /* Светло-серый фон */  
+            color: #343a40; /* Темно-серый текст для контраста */ 
+            justify-content: space-between;
+        }  
+        h3 {  
+            text-align: center; /* Выравнивание заголовков по центру */  
+        }
+        div {
+                background: #DCDCDC; /* Цвет фона */
+                padding: 20px; /* Поля вокруг текста */
+                margin-top: 20px; /* Отступ сверху */
+            }
+        .table {  
+            background-color: #ffffff; /* Белый фон для таблицы */  
+        }  
+        .table-striped tbody tr:nth-of-type(odd) {  
+            background-color: #f2f2f2; /* Нейтральный светлый фон для четных строк таблицы */  
+        }  
+        .btn-link {  
+            color: #007bff; /* Цвет для ссылок */  
+        }  
+        nav ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 10px;
+        }
+        nav li {
+            margin-right: 20px;
+        }
+    </style>  
+</head>  
+<body>  
+{% load static %}
+<div class="container">  
+    <nav>
+        <ul class="list-inline">  
+            {% if user.is_authenticated %}
+                <li><a href="{% url 'profile' %}">Личный кабинет</a></li>
+                <li><a href="{% url 'logout' %}">Выход</a></li>
+            {% endif %}
+        </ul>  
+    </nav>
+    <h1 align="center">Список заявок</h1>
+
+    {% if can_create %}
+        <div class="container">
+            <a class="btn btn-secondary mt-2" href="{% url 'create_request' %}">Создать новую заявку</a>  
+        </div>
+    {% endif %}  
+
+    {% if can_edit_status %}  
+        <div class="container">
+            <h2>Изменение статуса заявки</h2>  
+            <form action="{% url 'update_request_status' %}" method="GET">
+                <label for="request_id">Введите ID заявки:</label>  
+                <input type="number" id="request_id" name="request_id" required value="{{ request_id|default:0 }}">  
+                <button type="submit">Изменить статус</button>  
+            </form> 
+        </div>
+    {% endif %}  
+    <br>
+    <!-- Раздел для изменения шрифта и его размера -->
+        <button class="btn btn-link" data-toggle="collapse" data-target="#fontForm" aria-expanded="false" aria-controls="filterForm">Изменить шрифт</button>
+        <div class="collapse" id="fontForm">  
+            <label for="fontSelect">Выберите шрифт:</label>  
+            <select id="fontSelect" class="form-control w-25" onchange="changeFont(this.value)">  
+                <option value="Arial, sans-serif">Arial</option>  
+                <option value="'Courier New', Courier, monospace">Courier New</option>  
+                <option value="'Georgia', serif">Georgia</option>  
+                <option value="'Times New Roman', Times, serif">Times New Roman</option>  
+                <option value="'Verdana', sans-serif">Verdana</option>  
+            </select>  
+
+            <label for="fontSizeSelect" class="mt-3">Выберите размер шрифта:</label>  
+            <select id="fontSizeSelect" class="form-control w-25" onchange="changeFontSize(this.value)">  
+                <option value="16px">16px</option>  
+                <option value="18px">18px</option>  
+                <option value="20px">20px</option>  
+                <option value="22px">22px</option>  
+                <option value="24px">24px</option>  
+            </select>  
+        </div> 
+
+    <!-- Раздел фильтрации -->
+        <button class="btn btn-link" data-toggle="collapse" data-target="#filterForm" aria-expanded="false" aria-controls="filterForm">Применить фильтры</button>  
+
+        <div class="collapse" id="filterForm">  
+            <form method="get" class="form-inline mb-3">  
+                {{ filter.form.as_p }}  
+                <button type="submit" class="btn btn-secondary">Фильтровать</button>  
+            </form>  
+        </div>  
+    
+    <h3>Ваши заявки:</h3>
+        <table class="table table-striped">  
+            <thead>  
+                <tr>
+                    <th>Дата создания</th>  
+                    <th>Статус</th>
+                    <th>Заказчик</th> 
+                    <th>Водитель</th>  
+                    <th>Груз</th>  
+                    <th>Направление</th>  
+                    <th>Стоимость</th>  
+                    <th>Автомобиль</th>  
+                    <th>Прицеп</th>  
+                    <th>Дополнительная информация</th>
+                    <th>Действия</th>  
+                </tr>  
+            </thead>  
+            <tbody>  
+                {% for request in requests %}  
+                    <tr>
+                        <td>{{ request.created_at}}</td>
+                        <td>{{ request.get_status_display }}</td>  
+                        <td>{{ request.customer_name }}</td>
+                        <td>{{ request.driver_name }}</td>  
+                        <td>{{ request.cargo }}</td>  
+                        <td>{{ request.direction }}</td>  
+                        <td>{{ request.cost }}</td>  
+                        <td>{{ request.vehicle }}</td>  
+                        <td>{{ request.trailer }}</td>  
+                        <td>{{ request.additional_info }}</td>
+                        <td>  
+                            {% if can_edit_status %}  
+                            <a class="btn btn-warning btn-sm" href="{% url 'update_request_status'%}?request_id={{ request.id }}">Изменить статус</a>
+                            {% endif %}
+                        </td>  
+                    </tr>  
+                {% empty %}  
+                    <tr>  
+                        <td colspan="10" class="text-center">Нет заявок для отображения.</td>  
+                    </tr>  
+                {% endfor %}  
+            </tbody>  
+        </table>  
+        <div class="container text-center">
+            <a href="{% url 'report' %}" class="btn btn-secondary mt-2">Перейти к отчетности</a> 
+        </div>
+        
+        <!-- Всплывающее окно для уведомлений -->  
+        {% if messages %}  
+            {% for message in messages %}  
+                <div class="alert alert-success alert-dismissible fade show" role="alert">  
+                    {{ message }}  
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">  
+                        <span aria-hidden="true">&times;</span>  
+                    </button>  
+                </div>  
+            {% endfor %}  
+        {% endif %}  
+    </div>
+    <script>  
+        function changeFont(font) {  
+            document.body.style.fontFamily = font;  
+        }  
+
+        function changeFontSize(size) {  
+            document.body.style.fontSize = size;  
+        }  
+    </script>  
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>  
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>  
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>  
+</body>  
+</html>
